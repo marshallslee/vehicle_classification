@@ -155,19 +155,44 @@ def prepare_from_compcars(compcars_root: str, out: str, img_size: int, crop_bbox
 # ---------------- add truck/bus ----------------
 def add_single_class(src_dir: Optional[str], out: str, split_triplet=(0.7,0.15,0.15),
                      cls_name="truck", img_size=224):
-    if not src_dir: return
+    """
+    src_dir 이하에서 대소문자 무관하게 다양한 확장자(*.jpg, *.jpeg, *.png, *.bmp, *.webp, *.tif, *.tiff)를 재귀 수집.
+    224로 리사이즈해서 out/train|val|test/cls_name 에 저장.
+    """
+    if not src_dir:
+        return
     src = Path(src_dir); out = Path(out)
-    imgs = [p for p in src.rglob("*.jpg")]
+    exts = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}
+
+    # 재귀적으로 다양한 확장자 수집 (대소문자 무시)
+    imgs = []
+    for p in src.rglob("*"):
+        if p.is_file() and p.suffix.lower() in exts:
+            imgs.append(p)
+
     random.shuffle(imgs)
-    n = len(imgs); n_tr=int(n*split_triplet[0]); n_va=int(n*split_triplet[1])
+    n = len(imgs)
+    if n == 0:
+        print(f"[WARN] No images found for {cls_name} in {src_dir}. Supported: {sorted(exts)}")
+        return
+
+    n_tr = int(n * split_triplet[0]); n_va = int(n * split_triplet[1])
     parts = [("train", imgs[:n_tr]), ("val", imgs[n_tr:n_tr+n_va]), ("test", imgs[n_tr+n_va:])]
+
     for split, lst in parts:
-        dst_dir = out / split / cls_name; safe_makedirs(dst_dir)
+        dst_dir = out / split / cls_name
+        dst_dir.mkdir(parents=True, exist_ok=True)
         for p in lst:
             img = cv2.imread(str(p))
-            if img is None: continue
+            if img is None:
+                continue
             img = cv2.resize(img, (img_size, img_size))
-            cv2.imwrite(str(dst_dir / p.name), img)
+            # 이름 충돌 방지: 원본 이름 + 해시 일부
+            stem = p.stem
+            suffix = ".jpg"  # 최종 jpg로 저장
+            safe_name = f"{stem}_{abs(hash(str(p))) % (10**8)}{suffix}"
+            cv2.imwrite(str(dst_dir / safe_name), img)
+
 
 def main():
     ap = argparse.ArgumentParser()
