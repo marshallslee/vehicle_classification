@@ -19,8 +19,7 @@ pip install -r requirements.txt
 python prepare_dataset.py \
   --stanford_root "./Stanford Cars Dataset" \
   --out "./data_3cls" \
-  --crop_bbox \
-  --img_size 224
+  --crop_bbox 
 ```
 
 * `crop_bbox`: 바운딩 박스를 이용해 차량 부분만 잘라내도록 함.
@@ -30,8 +29,7 @@ python prepare_dataset.py \
 python prepare_dataset.py \
   --compcars_root "./CompCars Dataset" \
   --out "./data_3cls" \
-  --crop_bbox \
-  --img_size 224
+  --crop_bbox 
 ```
 
 ### (3) 추가 트럭 및 버스 이미지 반영
@@ -39,15 +37,13 @@ python prepare_dataset.py \
 python prepare_dataset.py \
   --bus_dir   "./extra datasets/bus" \
   --truck_dir "./extra datasets/truck" \
-  --out "./data_3cls" \
-  --img_size 224
+  --out "./data_3cls" 
 ```
 
 ```bash
 python prepare_dataset.py \
   --truck_dir "./extra datasets 2/truck" \
-  --out "./data_3cls" \
-  --img_size 224
+  --out "./data_3cls" 
 ```
 
 ## 4. Baseline CNN 학습
@@ -56,7 +52,6 @@ python train.py \
   --data_dir ./data_3cls \
   --arch baseline \
   --epochs 30 \
-  --batch_size 64 \
   --weighted_loss \
   --use_weighted_sampler \
   --mixup \
