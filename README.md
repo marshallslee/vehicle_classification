@@ -23,6 +23,8 @@ python prepare_dataset.py \
   --img_size 224
 ```
 
+* `crop_bbox`: 바운딩 박스를 이용해 차량 부분만 잘라내도록 함.
+
 ### (2) CompCars를 data_3cls에 병합
 ```bash
 python prepare_dataset.py \
@@ -60,6 +62,21 @@ python train.py \
   --mixup \
   --mixup_alpha 0.2
 ```
+
+* `batch_size`
+  - 한 번의 학습 단계에서 모델이 처리하는 이미지 묶음의 크기. 
+  - 즉 몇 장씩 묶어서 모델이 학습하느냐를 정의.
+  - 배치 값이 큰 경우 특징
+    - GPU 사용량이 많음
+    - 안정적 학습
+    - gradient가 평균화 되어 성능이 부드럽게 수렴
+  - 배치 값이 작은 경우 특징
+    - 메모리 사용량이 적음
+    - gradient noise 때문에 불안정
+* `weighted_loss`: 클래스별 데이터 수 차이 (불균형)를 보정하기 위해 클래스마다 다른 가중치를 부여하는 방식.
+* `use_weighted_sampler`: 학습 데이터 로딩시 희소 클래스 (truck, bus)를 더 자주 샘플링 하도록 하는 sampler 사용.
+* `mixup`: 두 클래스 사이의 결정 경계를 부드럽게 만드는 개념.
+* `mixup_alpha`: 두 클래스를 얼마나 강하게 섞을 것인지 결정하는 개념
 
 ## 5. ResNet50 학습 (Transfer Learning)
 ```bash
