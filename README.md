@@ -18,8 +18,7 @@ pip install -r requirements.txt
 ```bash
 python prepare_dataset.py \
   --stanford_root "./Stanford Cars Dataset" \
-  --out "./data_3cls" \
-  --crop_bbox 
+  --out "./data_3cls" 
 ```
 
 * `crop_bbox`: 바운딩 박스를 이용해 차량 부분만 잘라내도록 함.
@@ -28,8 +27,7 @@ python prepare_dataset.py \
 ```bash
 python prepare_dataset.py \
   --compcars_root "./CompCars Dataset" \
-  --out "./data_3cls" \
-  --crop_bbox 
+  --out "./data_3cls" 
 ```
 
 ### (3) 추가 트럭 및 버스 이미지 반영
