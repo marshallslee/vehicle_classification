@@ -5,9 +5,6 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from models import build_model
 
-# ==========================
-# 전역 상수
-# ==========================
 IMG_SIZE = 224
 BATCH_SIZE = 64
 
@@ -59,9 +56,6 @@ def main():
     model.load_state_dict(ckpt["state_dict"])
     model.eval()
 
-    # ===============================
-    # IMG_SIZE & BATCH_SIZE 적용
-    # ===============================
     tf = transforms.Compose([
         transforms.Resize((IMG_SIZE, IMG_SIZE)),
         transforms.ToTensor(),
@@ -78,7 +72,7 @@ def main():
 
     test_loader = DataLoader(
         test_ds,
-        batch_size=BATCH_SIZE,  # ← 상수 직접 사용
+        batch_size=BATCH_SIZE,
         shuffle=False,
         num_workers=args.num_workers
     )
@@ -102,17 +96,6 @@ def main():
 
     out_dir = os.path.dirname(args.checkpoint)
 
-    plot_confusion(
-        cm,
-        class_names,
-        os.path.join(out_dir, "confusion_matrix_eval.png")
-    )
+    plot_confusion(cm, class_names, os.path.join(out_dir, "confusion_matrix_eval.png"))
 
-    json.dump(
-        {"test_accuracy": acc, "report": rep},
-        open(os.path.join(out_dir, "metrics_eval.json"), "w")
-    )
-
-
-if __name__ == "__main__":
-    main()
+    json.dump({"test_accuracy": acc, "report": rep}, open(os.path.join(out_dir, "metrics_eval.json"), "w"))

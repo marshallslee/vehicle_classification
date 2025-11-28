@@ -255,3 +255,5 @@ def main():
     print("Done:", out)
 
 
+if __name__ == "__main__":
+    main()

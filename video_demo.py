@@ -28,8 +28,7 @@ def main():
     tf = transforms.Compose([
         transforms.Resize((args.img_size, args.img_size)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
     cap = cv2.VideoCapture(args.video if args.video else 0)
@@ -57,15 +56,18 @@ def main():
         fps = 1.0 / max(1e-6, (time.time() - fps_time))
         fps_time = time.time()
 
-        cv2.putText(frame, label, (16, 40),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0,255,0), 2)
-        cv2.putText(frame, f"FPS: {fps:.1f}", (16, 80),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
+        cv2.putText(frame, label, (16, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0,255,0), 2)
+        cv2.putText(frame, f"FPS: {fps:.1f}", (16, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
 
         cv2.imshow("Vehicle Classification (demo)", frame)
-        if cv2.waitKey(1) & 0xFF == 27:  # ESC
+
+        # ESC 키 누르면 아웃
+        if cv2.waitKey(1) & 0xFF == 27:
             break
 
     cap.release()
     cv2.destroyAllWindows()
 
+
+if __name__ == "__main__":
+    main()
