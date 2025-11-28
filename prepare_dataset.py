@@ -172,42 +172,51 @@ def prepare_from_compcars(compcars_root: str, out: str):
         shutil.copy2(p, (out / "val" / "car" / p.name))
 
 
-def add_single_class(src_dir: str, out: str, split_triplet=(0.7, 0.15, 0.15), cls_name="truck"):
+def add_single_class(src_dir: str, out_dir: str, split_ratio=(0.7, 0.15, 0.15), cls_name="truck"):
     if not src_dir:
+        print("No source directory provided.")
         return
 
     src = Path(src_dir)
-    out = Path(out)
-    exts = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}
+    out = Path(out_dir)
 
-    imgs = [p for p in src.rglob("*") if p.is_file() and p.suffix.lower() in exts]
+    valid_exts = {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".tif", ".tiff"}
 
-    random.shuffle(imgs)
-    if not imgs:
-        print(f"[WARN] No images found for {cls_name}.")
+    images = [p for p in src.rglob("*") if p.is_file() and p.suffix.lower() in valid_exts]
+    if not images:
+        print(f"[WARN] No images found under {src} for class '{cls_name}'.")
         return
 
-    n = len(imgs)
-    n_tr = int(n * split_triplet[0])
-    n_va = int(n * split_triplet[1])
+    random.shuffle(images)
 
-    splits = [
-        ("train", imgs[:n_tr]),
-        ("val", imgs[n_tr:n_tr + n_va]),
-        ("test", imgs[n_tr + n_va:]),
-    ]
+    n = len(images)
+    tr_ratio, va_ratio, _ = split_ratio
+    n_train = int(n * tr_ratio)
+    n_val   = int(n * va_ratio)
 
-    for split, lst in splits:
-        dst_dir = out / split / cls_name
-        dst_dir.mkdir(parents=True, exist_ok=True)
+    dataset_splits = {
+        "train": images[:n_train],
+        "val":   images[n_train:n_train + n_val],
+        "test":  images[n_train + n_val:],
+    }
 
-        for p in lst:
-            img = cv2.imread(str(p))
+    for split_name, file_list in dataset_splits.items():
+        dst = out / split_name / cls_name
+        dst.mkdir(parents=True, exist_ok=True)
+
+        for idx, img_path in enumerate(file_list):
+            img = cv2.imread(str(img_path))
             if img is None:
+                print(f"[WARN] Could not read image: {img_path}")
                 continue
+
             img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-            name = f"{p.stem}_{abs(hash(str(p))) % (10**8)}.jpg"
-            cv2.imwrite(str(dst_dir / name), img)
+
+            new_name = f"{cls_name}_{split_name}_{idx:06d}.jpg"
+            cv2.imwrite(str(dst / new_name), img)
+
+    print(f"[INFO] Finished adding '{cls_name}' ({len(images)} images).")
+
 
 
 def main():
@@ -246,5 +255,3 @@ def main():
     print("Done:", out)
 
 
-if __name__ == "__main__":
-    main()
