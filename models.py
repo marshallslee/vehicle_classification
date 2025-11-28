@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torchvision.models as models
 
-class BaselineCNN(nn.Module):
+class baseline_cnn(nn.Module):
     def __init__(self, num_classes=3, dropout=0.3):
         super().__init__()
         self.features = nn.Sequential(
@@ -25,7 +25,7 @@ class BaselineCNN(nn.Module):
 
 def build_model(arch: str, num_classes: int, dropout: float=0.3, freeze_backbone: bool=False):
     if arch == "baseline":
-        return BaselineCNN(num_classes=num_classes, dropout=dropout)
+        return baseline_cnn(num_classes=num_classes, dropout=dropout)
 
     if arch == "resnet50":
         m = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
