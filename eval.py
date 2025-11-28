@@ -99,3 +99,7 @@ def main():
     plot_confusion(cm, class_names, os.path.join(out_dir, "confusion_matrix_eval.png"))
 
     json.dump({"test_accuracy": acc, "report": rep}, open(os.path.join(out_dir, "metrics_eval.json"), "w"))
+
+
+if __name__ == "__main__":
+    main()
