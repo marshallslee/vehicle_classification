@@ -10,6 +10,7 @@ def get_args():
     p.add_argument("--arch", type=str, required=True, choices=["baseline","resnet50","efficientnet_b0"])
     p.add_argument("--video", type=str, default=None)
     p.add_argument("--class_names", nargs="+", default=["car","truck","bus"])
+    p.add_argument("--img_size", type=int, default=224)
     return p.parse_args()
 
 def main():
